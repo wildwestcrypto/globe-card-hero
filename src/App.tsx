@@ -1,32 +1,39 @@
-import React, { useState } from 'react';
+// src/App.tsx - CALLING PAUSE/RESUME
+
+import { useState, useRef } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import HeroText from './components/HeroText';
-import InteractiveGlobe from './components/InteractiveGlobe';
+import InteractiveGlobe, { GlobeHandle } from './components/InteractiveGlobe';
 import ProjectDetailPanel from './components/ProjectDetailPanel';
 import { projectData } from './data/projectData';
 import { Project } from './types/project';
 
 function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const globeRef = useRef<GlobeHandle>(null);
 
   const handleMarkerClick = (project: Project) => {
     setSelectedProject(project);
+    // NEW: Pause the globe's rotation when a marker is clicked
+    globeRef.current?.pauseAnimation();
   };
 
   const handlePanelClose = () => {
     setSelectedProject(null);
+    globeRef.current?.resetGlobeView();
+    // NEW: Resume the globe's rotation when the panel is closed
+    globeRef.current?.resumeAnimation();
   };
 
   return (
     <main className="relative w-full h-screen bg-brand-dark overflow-hidden">
-      {/* WRAPPER FOR TEXT: Add z-10 to bring it to the front */}
       <div className="absolute top-0 left-0 w-full h-1/2 flex items-start justify-center z-10">
         <HeroText />
       </div>
 
-      {/* WRAPPER FOR GLOBE: Add z-0 to place it in the background */}
       <div className="absolute -bottom-[50%] md:-bottom-[40%] lg:-bottom-[35%] w-full h-[100vh] z-0">
         <InteractiveGlobe
+          ref={globeRef}
           projectData={projectData}
           onMarkerClick={handleMarkerClick}
         />
