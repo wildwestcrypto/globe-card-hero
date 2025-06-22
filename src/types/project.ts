@@ -16,4 +16,5 @@ export interface Project {
   // NEW: URL for the BTC transaction
   btcTxUrl: string;
   hash: string;
+  imageUrl?: string; // NEW: Add the image URL property. It's optional (?).
 }
